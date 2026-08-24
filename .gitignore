@@ -1,0 +1,61 @@
+# Visual Studio user/state files
+.vs/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Visual Studio build output
+[Dd]ebug/
+[Rr]elease/
+[Rr]eleases/
+x64/
+x86/
+[Aa][Rr][Mm]/
+[Aa][Rr][Mm]64/
+[Bb]in/
+[Oo]bj/
+out/
+build/
+
+# C/C++ compiler and linker output
+*.obj
+*.o
+*.pch
+*.pdb
+*.ipdb
+*.iobj
+*.ilk
+*.idb
+*.exp
+*.lib
+*.dll
+*.exe
+*.app
+*.so
+*.dylib
+*.a
+
+# MSBuild logs and generated metadata
+*.log
+*.tlog/
+*.lastbuildstate
+*.recipe
+*.metagen
+*.db
+*.opendb
+
+# Test and coverage output
+TestResults/
+*.coverage
+*.coveragexml
+
+# Local editor and OS files
+.vscode/
+.idea/
+*.swp
+*.tmp
+*.bak
+Thumbs.db
+Desktop.ini
+.DS_Store
