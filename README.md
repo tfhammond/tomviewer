@@ -1,1 +1,1 @@
-open gl but like way worse
+Custom handwritten viewer of blender files. Starting with .obj. 
