@@ -29,4 +29,15 @@ struct Camera
 		glm::vec4 cameraPosition = viewMatrix * glm::vec4(worldPosition, 1.0f);
 		return glm::vec3(cameraPosition);
 	}
+
+	void zoom(float amount)
+	{
+		constexpr float minDistance = 0.5f;
+
+		glm::vec3 offset = position - target;
+		float distance = glm::length(offset);
+		float newDistance = glm::max(minDistance, distance - amount);
+
+		position = target + glm::normalize(offset) * newDistance;
+	}
 };
