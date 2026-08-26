@@ -2,18 +2,26 @@
 #include <vector>
 #include <glm/glm.hpp>
 #include <SDL3/SDL.h>
+#include "Camera.h"
 
 struct Vertex
 {
 	glm::vec3 position;
 
-	glm::vec2 projectVertex(glm::vec3 p, float cameraZ = 0.0f) const
-	{
-		p.z += cameraZ;
+	//glm::vec2 projectVertex(glm::vec3 p, float cameraZ = 0.0f) const
+	//{
+	//	p.z += cameraZ;
 
+	//	return {
+	//		p.x / p.z,
+	//		p.y / p.z
+	//	};
+	//}
+	glm::vec2 projectVertex(const glm::vec3& cameraPosition) const
+	{
 		return {
-			p.x / p.z,
-			p.y / p.z
+			cameraPosition.x / -cameraPosition.z,
+			cameraPosition.y / -cameraPosition.z
 		};
 	}
 
@@ -25,11 +33,16 @@ struct Triangle
 	Vertex y;
 	Vertex z;
 
-	std::vector<glm::vec2> project(float cameraZ = 0.0f) const
+	std::vector<glm::vec2> project(const Camera& camera) const
 	{
-		glm::vec2 xproject = x.projectVertex(x.position, cameraZ);
-		glm::vec2 yproject = y.projectVertex(y.position, cameraZ);
-		glm::vec2 zproject = z.projectVertex(z.position, cameraZ);
+		glm::vec3 xCamera = camera.worldToCamera(x.position);
+		glm::vec3 yCamera = camera.worldToCamera(y.position);
+		glm::vec3 zCamera = camera.worldToCamera(z.position);
+
+
+		glm::vec2 xproject = x.projectVertex(xCamera);
+		glm::vec2 yproject = y.projectVertex(yCamera);
+		glm::vec2 zproject = z.projectVertex(zCamera);
 		//return std::vector<glm::vec2>{ xproject, yproject, zproject };
 		return { xproject, yproject, zproject };
 	}
@@ -40,7 +53,7 @@ class Mesh
 public:
 	Mesh() = default;
 	void ParseObjFile();
-	void Draw(SDL_Renderer* renderer);
+	void Draw(SDL_Renderer* renderer, const Camera& camera);
 	
 	//void moveForwardZ()
 	//{

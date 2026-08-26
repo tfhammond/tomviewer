@@ -48,6 +48,16 @@ int main(int argc, char* argv[])
 	
 	Square square{ 50.0, 50.0, 300.0 };
 
+
+
+	Camera camera;
+
+	Mesh mesh;
+	mesh.ParseObjFile();
+
+
+
+
 	// Execution loop
 	while (running)
 	{
@@ -57,8 +67,27 @@ int main(int argc, char* argv[])
 			switch (event.type)
 			{
 			case SDL_EVENT_QUIT:
-			{
 				running = false;
+				break;
+
+			case SDL_EVENT_MOUSE_MOTION:
+			{
+				if (event.motion.state & SDL_BUTTON_MMASK)
+				{
+					constexpr float sensitivity = 0.005f;
+
+					// Horizontal orbit
+					camera.orbit(event.motion.xrel * sensitivity, camera.up);
+
+					// Vertical orbit
+					glm::vec3 forward =
+						glm::normalize(camera.target - camera.position);
+
+					glm::vec3 right =
+						glm::normalize(glm::cross(forward, camera.up));
+
+					camera.orbit(event.motion.yrel * sensitivity, right);
+				}
 				break;
 			}
 			}
@@ -77,9 +106,7 @@ int main(int argc, char* argv[])
 		/*square.Draw(renderer);
 		square.Rotate(0.0001f);*/
 
-		Mesh mesh;
-		mesh.ParseObjFile();
-		mesh.Draw(renderer);
+		mesh.Draw(renderer, camera);
 		
 
 		SDL_RenderPresent(renderer);

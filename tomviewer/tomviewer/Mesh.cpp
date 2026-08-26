@@ -81,7 +81,7 @@ void Mesh::ParseObjFile()
 }
 
 
-void Mesh::Draw(SDL_Renderer* renderer)
+void Mesh::Draw(SDL_Renderer* renderer, const Camera& camera)
 {
 	// moveForwardZ();
 
@@ -95,12 +95,16 @@ void Mesh::Draw(SDL_Renderer* renderer)
 
 	for (const Triangle& triangle : m_triangles)
 	{
-		if (triangle.x.position.z + cameraZ <= 0.0f || triangle.y.position.z + cameraZ <= 0.0f || triangle.z.position.z + cameraZ <= 0.0f)
+		std::vector<glm::vec2> projected = triangle.project(camera);
+
+		glm::vec3 xCamera = camera.worldToCamera(triangle.x.position);
+		glm::vec3 yCamera = camera.worldToCamera(triangle.y.position);
+		glm::vec3 zCamera = camera.worldToCamera(triangle.z.position);
+
+		if (xCamera.z >= 0.0f || yCamera.z >= 0.0f || zCamera.z >= 0.0f)
 		{
 			continue;
 		}
-
-		std::vector<glm::vec2> projected = triangle.project(cameraZ);
 
 		SDL_FPoint screen[3];
 		for (int i = 0; i < 3; ++i)
