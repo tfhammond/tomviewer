@@ -24,9 +24,9 @@ struct Camera
 		position = target + glm::vec3(rotation * glm::vec4(offset, 0.0f));
 	}
 
-	glm::vec3 worldToCamera(const glm::vec3& worldPosition) const
+	glm::vec3 worldToCamera(const glm::mat4& viewMatrix, const glm::vec3& worldPosition) const
 	{
-		glm::vec4 cameraPosition = viewMatrix() * glm::vec4(worldPosition, 1.0f);
+		glm::vec4 cameraPosition = viewMatrix * glm::vec4(worldPosition, 1.0f);
 		return glm::vec3(cameraPosition);
 	}
 };

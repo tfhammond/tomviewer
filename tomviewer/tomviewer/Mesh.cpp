@@ -78,13 +78,12 @@ bool Mesh::ParseObjFile(const std::string& path)
 			// either unknown tag or unsupported tag (will add more when updating complexity of parsing)
 		}
 	}
+	return true;
 }
 
 
 void Mesh::Draw(SDL_Renderer* renderer, const Camera& camera)
 {
-	// moveForwardZ();
-
 	int width;
 	int height;
 
@@ -93,18 +92,24 @@ void Mesh::Draw(SDL_Renderer* renderer, const Camera& camera)
 	constexpr float cameraZ = 5.0f;
 	constexpr float focalLength = 300.0f;
 
+	glm::mat4 viewMatrix = camera.viewMatrix();
+
 	for (const Triangle& triangle : m_triangles)
 	{
-		std::vector<glm::vec2> projected = triangle.project(camera);
-
-		glm::vec3 xCamera = camera.worldToCamera(triangle.x.position);
-		glm::vec3 yCamera = camera.worldToCamera(triangle.y.position);
-		glm::vec3 zCamera = camera.worldToCamera(triangle.z.position);
+		glm::vec3 xCamera = camera.worldToCamera(viewMatrix, triangle.x.position);
+		glm::vec3 yCamera = camera.worldToCamera(viewMatrix, triangle.y.position);
+		glm::vec3 zCamera = camera.worldToCamera(viewMatrix, triangle.z.position);
 
 		if (xCamera.z >= 0.0f || yCamera.z >= 0.0f || zCamera.z >= 0.0f)
 		{
 			continue;
 		}
+
+		glm::vec2 projected[3] {
+			triangle.x.projectVertex(xCamera),
+			triangle.y.projectVertex(yCamera),
+			triangle.z.projectVertex(zCamera)
+		};
 
 		SDL_FPoint screen[3];
 		for (int i = 0; i < 3; ++i)

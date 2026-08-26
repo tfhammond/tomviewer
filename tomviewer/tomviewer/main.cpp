@@ -3,13 +3,12 @@
 #include "Square.h"
 
 #include "Mesh.h"
-
+#include "OpenMeshButton.h"
 
 int main(int argc, char* argv[])
 {
-
-	constexpr int height = 800;
-	constexpr int width = 600;
+	constexpr int width = 1440;
+	constexpr int height = 900;
 
 	if (!SDL_Init(SDL_INIT_VIDEO))
 	{
@@ -65,6 +64,8 @@ int main(int argc, char* argv[])
 		SDL_Event event{0};
 		while (SDL_PollEvent(&event))
 		{
+			openMeshButton.HandleEvent(event);
+
 			switch (event.type)
 			{
 			case SDL_EVENT_QUIT:
@@ -93,6 +94,7 @@ int main(int argc, char* argv[])
 			}
 			}
 		}
+		openMeshButton.Update();
 		
 		SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
 		SDL_RenderClear(renderer);
@@ -108,6 +110,7 @@ int main(int argc, char* argv[])
 		square.Rotate(0.0001f);*/
 
 		mesh.Draw(renderer, camera);
+		openMeshButton.Draw(renderer);
 		
 
 		SDL_RenderPresent(renderer);
@@ -117,9 +120,4 @@ int main(int argc, char* argv[])
 	SDL_DestroyWindow(window);
 	SDL_Quit();
 	return 0;
-
-	
-
-
-
 }
