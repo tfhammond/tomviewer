@@ -52,7 +52,10 @@ int main(int argc, char* argv[])
 	Camera camera;
 
 	Mesh mesh;
-	mesh.ParseObjFile("meshes/monkey.obj");
+	if (mesh.ParseObjFile("meshes/monkey.obj"))
+	{
+		camera.Frame(mesh.Center(), mesh.Radius());
+	}
 	OpenMeshButton openMeshButton(window, mesh);
 
 
@@ -112,7 +115,10 @@ int main(int argc, char* argv[])
 				
 			}
 		}
-		openMeshButton.Update();
+		if (openMeshButton.Update())
+		{
+			camera.Frame(mesh.Center(), mesh.Radius());
+		}
 		
 		SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
 		SDL_RenderClear(renderer);

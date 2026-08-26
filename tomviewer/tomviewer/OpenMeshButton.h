@@ -13,7 +13,7 @@ public:
 	OpenMeshButton(SDL_Window* window, Mesh& mesh);
 
 	void HandleEvent(const SDL_Event& event);
-	void Update();
+	bool Update();
 	void Draw(SDL_Renderer* renderer);
 
 private:

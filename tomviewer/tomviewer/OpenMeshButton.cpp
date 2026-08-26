@@ -33,7 +33,7 @@ void OpenMeshButton::HandleEvent(const SDL_Event& event)
 	}
 }
 
-void OpenMeshButton::Update()
+bool OpenMeshButton::Update()
 {
 	DialogResult result = DialogResult::None;
 	std::string value;
@@ -51,7 +51,7 @@ void OpenMeshButton::Update()
 
 	if (result == DialogResult::None)
 	{
-		return;
+		return false;
 	}
 
 	m_dialogOpen = false;
@@ -62,6 +62,7 @@ void OpenMeshButton::Update()
 		if (m_mesh.ParseObjFile(value))
 		{
 			m_status = "Loaded: " + fileName;
+			return true;
 		}
 		else
 		{
@@ -73,6 +74,7 @@ void OpenMeshButton::Update()
 		m_status = "File dialog failed";
 		SDL_Log("Open file dialog failed: %s", value.c_str());
 	}
+	return false;
 }
 
 void OpenMeshButton::Draw(SDL_Renderer* renderer)

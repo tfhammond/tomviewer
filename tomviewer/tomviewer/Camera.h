@@ -7,6 +7,7 @@ struct Camera
 	glm::vec3 position{0.0f, 0.0f, -5.0f};
 	glm::vec3 target{ 0.0f, 0.0f, 0.0f };
 	glm::vec3 up{ 0.0f, 1.0f, 0.0f };
+	float minDistance = 0.5f;
 
 	glm::mat4 viewMatrix() const
 	{
@@ -30,10 +31,17 @@ struct Camera
 		return glm::vec3(cameraPosition);
 	}
 
+	void Frame(const glm::vec3& center, float radius)
+	{
+		glm::vec3 direction = glm::normalize(position - target);
+		radius = glm::max(radius, 0.1f);
+		target = center;
+		position = target + direction * radius * 2.2f;
+		minDistance = radius * 1.01f;
+	}
+
 	void zoom(float amount)
 	{
-		constexpr float minDistance = 0.5f;
-
 		glm::vec3 offset = position - target;
 		float distance = glm::length(offset);
 		float newDistance = glm::max(minDistance, distance - amount);

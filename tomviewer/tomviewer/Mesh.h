@@ -32,7 +32,11 @@ public:
 	Mesh() = default;
 	bool ParseObjFile(const std::string& path);
 	void Draw(SDL_Renderer* renderer, const Camera& camera);
+	const glm::vec3& Center() const { return m_center; }
+	float Radius() const { return m_radius; }
 
 private:
 	std::vector<Triangle> m_triangles;
+	glm::vec3 m_center{ 0.0f };
+	float m_radius = 0.0f;
 };

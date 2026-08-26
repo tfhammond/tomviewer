@@ -2,6 +2,7 @@
 #include <fstream>
 #include <sstream>
 #include <iostream>
+#include <limits>
 
 bool Mesh::ParseObjFile(const std::string& path)
 {
@@ -15,6 +16,8 @@ bool Mesh::ParseObjFile(const std::string& path)
 
 	this->m_triangles.clear();
 	std::vector<Vertex> vertices;
+	glm::vec3 boundsMin(std::numeric_limits<float>::max());
+	glm::vec3 boundsMax(std::numeric_limits<float>::lowest());
 	std::string line;
 
 	while (std::getline(file, line))
@@ -33,6 +36,8 @@ bool Mesh::ParseObjFile(const std::string& path)
 			if (iss >> vertex.position.x >> vertex.position.y >> vertex.position.z)
 			{
 				vertices.push_back(vertex);
+				boundsMin = glm::min(boundsMin, vertex.position);
+				boundsMax = glm::max(boundsMax, vertex.position);
 			}
 			else
 			{
@@ -78,6 +83,17 @@ bool Mesh::ParseObjFile(const std::string& path)
 			// either unknown tag or unsupported tag (will add more when updating complexity of parsing)
 		}
 	}
+	if (vertices.empty())
+	{
+		return false;
+	}
+
+	m_center = (boundsMin + boundsMax) * 0.5f;
+	m_radius = 0.0f;
+	for (const Vertex& vertex : vertices)
+	{
+		m_radius = glm::max(m_radius, glm::length(vertex.position - m_center));
+	}
 	return true;
 }
 
@@ -89,8 +105,7 @@ void Mesh::Draw(SDL_Renderer* renderer, const Camera& camera)
 
 	SDL_GetRenderOutputSize(renderer, &width, &height);
 
-	constexpr float cameraZ = 5.0f;
-	constexpr float focalLength = 300.0f;
+	const float focalLength = height * 0.5f / glm::tan(glm::radians(30.0f));
 
 	glm::mat4 viewMatrix = camera.viewMatrix();
 
