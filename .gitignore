@@ -36,6 +36,9 @@ build/
 *.dylib
 *.a
 
+# Track 3D model files
+!tomviewer/tomviewer/meshes/*.obj
+
 # MSBuild logs and generated metadata
 *.log
 *.tlog/
