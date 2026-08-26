@@ -68,30 +68,48 @@ int main(int argc, char* argv[])
 
 			switch (event.type)
 			{
-			case SDL_EVENT_QUIT:
-				running = false;
-				break;
+				case SDL_EVENT_QUIT:
+					running = false;
+					break;
 
-			case SDL_EVENT_MOUSE_MOTION:
-			{
-				if ((event.motion.state & SDL_BUTTON_MMASK) || (SDL_GetModState() & SDL_KMOD_ALT))
+				case SDL_EVENT_MOUSE_MOTION:
 				{
-					constexpr float sensitivity = 0.005f;
+					if ((event.motion.state & SDL_BUTTON_MMASK) || (SDL_GetModState() & SDL_KMOD_ALT))
+					{
+						constexpr float sensitivity = 0.005f;
 
-					// Horizontal orbit
-					camera.orbit(event.motion.xrel * sensitivity, camera.up);
+						// Horizontal orbit
+						camera.orbit(event.motion.xrel * sensitivity, camera.up);
 
-					// Vertical orbit
-					glm::vec3 forward =
-						glm::normalize(camera.target - camera.position);
+						// Vertical orbit
+						glm::vec3 forward =
+							glm::normalize(camera.target - camera.position);
 
-					glm::vec3 right =
-						glm::normalize(glm::cross(forward, camera.up));
+						glm::vec3 right =
+							glm::normalize(glm::cross(forward, camera.up));
 
-					camera.orbit(event.motion.yrel * sensitivity, right);
+						camera.orbit(event.motion.yrel * sensitivity, right);
+					}
+					break;
 				}
-				break;
+				case SDL_EVENT_KEY_DOWN:
+				{
+					switch (event.key.key)
+					{
+					case SDLK_PLUS:
+					case SDLK_EQUALS:
+					case SDLK_KP_PLUS:
+						camera.zoom(1.0f);
+						break;
+
+					case SDLK_MINUS:
+					case SDLK_KP_MINUS:
+						camera.zoom(-1.0f);
+						break;
+					}
+					break;
 			}
+				
 			}
 		}
 		openMeshButton.Update();
