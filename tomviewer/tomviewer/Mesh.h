@@ -52,7 +52,7 @@ class Mesh
 {
 public:
 	Mesh() = default;
-	void ParseObjFile();
+	bool ParseObjFile(const std::string& path);
 	void Draw(SDL_Renderer* renderer, const Camera& camera);
 	
 	//void moveForwardZ()
