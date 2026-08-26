@@ -2,6 +2,8 @@
 
 #include "Square.h"
 
+#include "Mesh.h"
+
 
 int main(int argc, char* argv[])
 {
@@ -74,6 +76,9 @@ int main(int argc, char* argv[])
 
 		square.Draw(renderer);
 		square.Rotate(0.0001f);
+
+		Mesh mesh;
+		mesh.ParseObjFile();
 		
 
 		SDL_RenderPresent(renderer);
