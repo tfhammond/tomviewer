@@ -5,6 +5,7 @@ OpenMeshButton::OpenMeshButton(SDL_Window* window, Mesh& mesh)
 	m_mesh(mesh),
 	m_status("Loaded: monkey.obj")
 {
+	// Use the application's mesh directory as the initial file-dialog location.
 	char* currentDirectory = SDL_GetCurrentDirectory();
 	if (currentDirectory)
 	{
@@ -15,15 +16,14 @@ OpenMeshButton::OpenMeshButton(SDL_Window* window, Mesh& mesh)
 
 void OpenMeshButton::HandleEvent(const SDL_Event& event)
 {
+	// A click opens the dialog only when both press and release occur on the button.
 	if (event.type == SDL_EVENT_MOUSE_BUTTON_DOWN && event.button.button == SDL_BUTTON_LEFT)
 	{
 		m_pressed = !m_dialogOpen && IsInside(event.button.x, event.button.y);
 	}
 	else if (event.type == SDL_EVENT_MOUSE_BUTTON_UP && event.button.button == SDL_BUTTON_LEFT)
 	{
-		const bool shouldOpenDialog = m_pressed
-			&& IsInside(event.button.x, event.button.y)
-			&& !m_dialogOpen;
+		const bool shouldOpenDialog = m_pressed && IsInside(event.button.x, event.button.y) && !m_dialogOpen;
 		m_pressed = false;
 
 		if (shouldOpenDialog)
@@ -38,6 +38,7 @@ void OpenMeshButton::Update()
 	DialogResult result = DialogResult::None;
 	std::string value;
 	{
+		// Copy the dialog callback's result while holding the mutex, then process it on the main thread.
 		std::lock_guard<std::mutex> lock(m_mutex);
 		result = m_result;
 		if (result != DialogResult::None)
@@ -56,6 +57,7 @@ void OpenMeshButton::Update()
 	m_dialogOpen = false;
 	if (result == DialogResult::Selected)
 	{
+		// Replace the current mesh and report whether loading succeeded.
 		const std::string fileName = FileNameFromPath(value);
 		if (m_mesh.ParseObjFile(value))
 		{
@@ -75,6 +77,7 @@ void OpenMeshButton::Update()
 
 void OpenMeshButton::Draw(SDL_Renderer* renderer)
 {
+	// Select a visual state, then draw the button and its current load status.
 	float mouseX = 0.0f;
 	float mouseY = 0.0f;
 	SDL_GetMouseState(&mouseX, &mouseY);
@@ -107,6 +110,7 @@ void OpenMeshButton::Draw(SDL_Renderer* renderer)
 
 void SDLCALL OpenMeshButton::OnFileSelected(void* userdata, const char* const* filelist, int)
 {
+	// Translate SDL's asynchronous callback into a result for Update() to consume.
 	OpenMeshButton& button = *static_cast<OpenMeshButton*>(userdata);
 	std::lock_guard<std::mutex> lock(button.m_mutex);
 
@@ -141,6 +145,7 @@ std::string OpenMeshButton::FileNameFromPath(const std::string& path) const
 
 void OpenMeshButton::OpenDialog()
 {
+	// Restrict the native picker to Wavefront OBJ files and start it asynchronously. (Can expand on later)
 	static const SDL_DialogFileFilter objFilter{ "Wavefront OBJ", "obj" };
 	m_dialogOpen = true;
 	SDL_ShowOpenFileDialog(
