@@ -6,14 +6,14 @@
 void Mesh::ParseObjFile()
 {
 	
-	std::ifstream file("meshes/Cube.obj");
+	std::ifstream file("meshes/monkey.obj");
 	if (!file)
 	{
 		std::cerr << "Error: Could not open .obj file.\n";
 		return;
 	}
 
-	this->triangles.clear();
+	this->m_triangles.clear();
 	std::vector<Vertex> vertices;
 	std::string line;
 
@@ -70,7 +70,7 @@ void Mesh::ParseObjFile()
 					vertices[positionIndices[i]],
 					vertices[positionIndices[i + 1]]
 				};
-				triangles.push_back(triangle);
+				m_triangles.push_back(triangle);
 			}
 		}
 		else
@@ -81,3 +81,50 @@ void Mesh::ParseObjFile()
 }
 
 
+void Mesh::Draw(SDL_Renderer* renderer)
+{
+	// moveForwardZ();
+
+	int width;
+	int height;
+
+	SDL_GetRenderOutputSize(renderer, &width, &height);
+
+	constexpr float cameraZ = 5.0f;
+	constexpr float focalLength = 300.0f;
+
+	for (const Triangle& triangle : m_triangles)
+	{
+		if (triangle.x.position.z + cameraZ <= 0.0f || triangle.y.position.z + cameraZ <= 0.0f || triangle.z.position.z + cameraZ <= 0.0f)
+		{
+			continue;
+		}
+
+		std::vector<glm::vec2> projected = triangle.project(cameraZ);
+
+		SDL_FPoint screen[3];
+		for (int i = 0; i < 3; ++i)
+		{
+			screen[i] = {
+				width * 0.5f + projected[i].x * focalLength,
+				height * 0.5f - projected[i].y * focalLength
+			};
+		}
+
+		SDL_RenderLine(
+			renderer,
+			screen[0].x, screen[0].y,
+			screen[1].x, screen[1].y
+		);
+		SDL_RenderLine(
+			renderer,
+			screen[1].x, screen[1].y,
+			screen[2].x, screen[2].y
+		);
+		SDL_RenderLine(
+			renderer,
+			screen[2].x, screen[2].y,
+			screen[0].x, screen[0].y
+		);
+	}
+}

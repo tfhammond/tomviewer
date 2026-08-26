@@ -74,11 +74,12 @@ int main(int argc, char* argv[])
 			SDL_Log("SDL_RenderPoint failed: %s", SDL_GetError());
 		}
 
-		square.Draw(renderer);
-		square.Rotate(0.0001f);
+		/*square.Draw(renderer);
+		square.Rotate(0.0001f);*/
 
 		Mesh mesh;
 		mesh.ParseObjFile();
+		mesh.Draw(renderer);
 		
 
 		SDL_RenderPresent(renderer);
