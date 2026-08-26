@@ -120,20 +120,13 @@ void Mesh::Draw(SDL_Renderer* renderer, const Camera& camera)
 			};
 		}
 
-		SDL_RenderLine(
-			renderer,
-			screen[0].x, screen[0].y,
-			screen[1].x, screen[1].y
-		);
-		SDL_RenderLine(
-			renderer,
-			screen[1].x, screen[1].y,
-			screen[2].x, screen[2].y
-		);
-		SDL_RenderLine(
-			renderer,
-			screen[2].x, screen[2].y,
-			screen[0].x, screen[0].y
-		);
+		SDL_FPoint outline[4]{
+			screen[0],
+			screen[1],
+			screen[2],
+			screen[0]
+		};
+
+		SDL_RenderLines(renderer, outline, 4);
 	}
 }
