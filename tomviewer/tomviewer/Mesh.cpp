@@ -3,14 +3,14 @@
 #include <sstream>
 #include <iostream>
 
-void Mesh::ParseObjFile()
+bool Mesh::ParseObjFile(const std::string& path)
 {
 	
-	std::ifstream file("meshes/monkey.obj");
+	std::ifstream file(path);
 	if (!file)
 	{
 		std::cerr << "Error: Could not open .obj file.\n";
-		return;
+		return false;
 	}
 
 	this->m_triangles.clear();

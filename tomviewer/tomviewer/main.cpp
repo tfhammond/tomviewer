@@ -53,7 +53,8 @@ int main(int argc, char* argv[])
 	Camera camera;
 
 	Mesh mesh;
-	mesh.ParseObjFile();
+	mesh.ParseObjFile("meshes/monkey.obj");
+	OpenMeshButton openMeshButton(window, mesh);
 
 
 
@@ -72,7 +73,7 @@ int main(int argc, char* argv[])
 
 			case SDL_EVENT_MOUSE_MOTION:
 			{
-				if (event.motion.state & SDL_BUTTON_MMASK)
+				if ((event.motion.state & SDL_BUTTON_MMASK) || (SDL_GetModState() & SDL_KMOD_ALT))
 				{
 					constexpr float sensitivity = 0.005f;
 
